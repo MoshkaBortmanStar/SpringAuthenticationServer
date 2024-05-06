@@ -1,6 +1,7 @@
 package io.moshkabortman.springauthenticationserver.component;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -41,22 +42,13 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    // Метод для извлечения имени пользователя из токена
-    public String getUsernameFromToken(String token) {
-        Claims claims = Jwts.parser()
-                .setSigningKey(jwtSecret)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-        return claims.getSubject();
-    }
 
     // Метод для проверки действительности токена
     public boolean validateToken(String token) {
         try {
-            Jwts.parser().setSigningKey(jwtSecret).build().parseClaimsJws(token);
+            Jwts.parser().setSigningKey(key).build().parseClaimsJws(token);
             return true;
-        } catch (Exception e) {
+        } catch (JwtException | IllegalArgumentException e) {
             return false;
         }
     }

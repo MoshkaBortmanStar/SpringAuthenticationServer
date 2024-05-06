@@ -14,8 +14,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-import static org.springframework.security.config.Customizer.withDefaults;
-
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -25,12 +23,14 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-                .authorizeRequests(authorize -> authorize
-                        .anyRequest().permitAll()
-                )
-                .httpBasic(withDefaults()); // Включаем базовую HTTP аутентификацию
+                .authorizeRequests(auth -> auth
+                        .requestMatchers("api/auth/validateToken").permitAll()
+                        .anyRequest().authenticated())
+                .httpBasic(httpBasic -> {
+                }); // Включаем базовую HTTP аутентификацию
         return http.build();
     }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {

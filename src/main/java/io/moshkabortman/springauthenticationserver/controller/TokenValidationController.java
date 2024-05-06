@@ -32,16 +32,9 @@ public class TokenValidationController {
     private UserDetailsService userDetailsService; // Ваш сервис для работы с пользователями
 
     @PostMapping("api/auth/validateToken")
-    public ResponseEntity<?> validateToken(@RequestBody TokenValidationRequest request) {
+    public boolean validateToken(@RequestBody TokenValidationRequest request) {
         String token = request.getToken();
-
-        if (token != null && tokenProvider.validateToken(token)) {
-            // Получение информации о пользователе из токена
-            UserDetails userDetails = userDetailsService.loadUserByUsername(tokenProvider.getUsernameFromToken(token));
-            return ResponseEntity.ok(userDetails);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token");
-        }
+        return tokenProvider.validateToken(token);
     }
 
 

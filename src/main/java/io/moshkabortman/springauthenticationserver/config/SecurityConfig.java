@@ -24,7 +24,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeRequests(auth -> auth
-                        .requestMatchers("api/auth/validateToken").permitAll()
+                        .requestMatchers("api/auth/validateToken", "api/auth/login").permitAll()
                         .anyRequest().authenticated())
                 .httpBasic(httpBasic -> {
                 }); // Включаем базовую HTTP аутентификацию

@@ -1,2 +1,13 @@
 app:
   jwtSecret: MySecretKeyForJWTTokenGeneration
+
+spring:
+  application:
+    name: sec-service
+
+server:
+  port: 8088
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}

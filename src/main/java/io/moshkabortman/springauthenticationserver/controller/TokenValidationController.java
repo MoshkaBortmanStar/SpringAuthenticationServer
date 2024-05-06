@@ -1,20 +1,13 @@
 package io.moshkabortman.springauthenticationserver.controller;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
 import io.moshkabortman.springauthenticationserver.component.JwtTokenProvider;
-import io.moshkabortman.springauthenticationserver.data.JwtAuthenticationResponse;
 import io.moshkabortman.springauthenticationserver.data.LoginRequest;
-import io.moshkabortman.springauthenticationserver.data.TokenValidationRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -32,14 +25,13 @@ public class TokenValidationController {
     private UserDetailsService userDetailsService; // Ваш сервис для работы с пользователями
 
     @PostMapping("api/auth/validateToken")
-    public boolean validateToken(@RequestBody TokenValidationRequest request) {
-        String token = request.getToken();
+    public boolean validateToken(@RequestHeader("token") String token) {
         return tokenProvider.validateToken(token);
     }
 
 
-    @GetMapping("api/auth/validateToken")
-    public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
+    @PostMapping("api/auth/login")
+    public ResponseEntity<String> authenticateUser(@RequestBody LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getUsername(),
@@ -47,7 +39,6 @@ public class TokenValidationController {
                 )
         );
 
-        String jwt = tokenProvider.generateToken(authentication);
-        return ResponseEntity.ok(new JwtAuthenticationResponse(jwt));
+        return ResponseEntity.ok(tokenProvider.generateToken(authentication));
     }
 }
